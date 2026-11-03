@@ -1,0 +1,20 @@
+# Tested with Python 3.10, CUDA 12.1 and PyTorch 2.1.0 (install PyTorch first, see README).
+transformers==4.42.3
+tokenizers==0.19.1
+peft==0.4.0
+accelerate==0.33.0
+datasets==2.20.0
+sentencepiece==0.1.99
+bitsandbytes==0.41.3
+numpy==1.22.4
+scipy==1.7.3
+scikit-learn==1.0.2
+pandas==2.3.3
+pyyaml==6.0.3
+protobuf==3.19.4
+grpcio==1.75.1
+grpcio-tools==1.48.2
+dill==0.3.8
+psutil==7.1.0
+nvidia-ml-py==13.590.44
+pytest==9.0.1

@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+venv/
+.venv/
+.env
+
+# Datasets and models (see data/README.md)
+data/*
+!data/README.md
+models/
+.cache/
+
+# Experiment outputs
+exp/
+0_results/
+ckpt/
+logs/
+wandb/
+*.log
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+
+# Third-party tools installed locally
+tools/
+
+# Editors and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store

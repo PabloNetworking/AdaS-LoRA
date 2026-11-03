@@ -1,0 +1,1 @@
+"""Contrib worker package."""

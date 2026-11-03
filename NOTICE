@@ -1,0 +1,33 @@
+AdaS-LoRA
+=========
+
+This repository is a fork of FederatedScope (v0.3.0) and its
+FederatedScope-LLM extension, distributed under the Apache License,
+Version 2.0. See the LICENSE file for the full license text.
+
+    FederatedScope
+    Copyright 2022 Alibaba Group Holding Limited
+    https://github.com/alibaba/FederatedScope
+
+Most files under `federatedscope/` come from that project and keep its
+copyright and license. The additions and modifications in this repository
+are released under the same license. They include:
+
+  * `federatedscope/glue/`: GLUE data loading and DeBERTa model building.
+  * `federatedscope/contrib/` and `federatedscope/core/aggregators/`:
+    the HetLoRA, FAH-QLoRA and AdaS method implementations, the bandwidth
+    manager and the network-trace loader. FedIT runs through the FedAvg
+    path of `federatedscope/core/`.
+  * Changes to `federatedscope/core/` for heterogeneous LoRA ranks,
+    sparse rank-1 component exchange and communication accounting.
+  * `configs/` and `scripts/`.
+
+FedIT, HetLoRA and FAH-QLoRA are included as comparison baselines.
+
+Not redistributed
+-----------------
+  * Datasets (GLUE, 4G LTE network traces) are obtained separately and are
+    subject to their own licenses. See data/README.md.
+  * OpenAI HumanEval, used by
+    `federatedscope/llm/eval/eval_for_code/humaneval.py`, is not vendored
+    (MIT License, Copyright OpenAI).

@@ -1,0 +1,173 @@
+# Layer-aware AdaS: AdaS with rank-1 components identified per LoRA layer.
+
+seed: 50
+use_gpu: True
+device: 0
+
+outdir: exp/adas_layeraware
+
+debug: False
+
+federate:
+  mode: standalone
+  method: adas_layeraware
+  client_num: 12
+  total_round_num: 20
+  save_to: "ckpt/adas_layeraware.ckpt"
+  online_aggr: False
+  ignore_weight: False
+  share_local_model: False
+  communication:
+    network_trace_distribution:
+      static: 0.0
+      pedestrian: 0.0
+      bus: 0.0
+      static_extended: 0.0
+      pedestrian_extended: 0.0
+
+data:
+  root: data/
+  type: 'sst2@glue'
+  splits: [0.90, 0.10]
+  splitter: 'iid'
+
+dataloader:
+  batch_size: 32
+
+model:
+  type: 'microsoft/deberta-large@huggingface_llm'
+  task: 'SequenceClassification'
+  out_channels: 2
+
+trainer:
+  type: gluetrainer
+
+train:
+  local_update_steps: 30
+  batch_or_epoch: batch
+  optimizer:
+    type: AdamW
+    lr: 0.0005
+    weight_decay: 0.01
+  scheduler:
+    type: CosineAnnealingLR
+    T_max: 20
+  is_enable_half: False
+
+criterion:
+  type: CrossEntropyLoss
+
+eval:
+  freq: 5
+  metrics: ['acc', 'f1', 'loss']
+  split: ['val']
+  report: ['weighted_avg']
+  best_res_update_round_wise_key: val_acc
+  count_flops: False
+
+glue:
+  max_length: 128
+  retry_on_nan_loss: True
+
+  adapter:
+    use: True
+    mv_to_cpu: False
+
+    args:
+      - adapter_package: peft
+        adapter_method: lora
+        target_modules: ['attention.self.in_proj', 'attention.output.dense',
+                         'intermediate.dense', 'output.dense']
+        r: 8
+        lora_alpha: 16
+        lora_dropout: 0.05
+
+    base_quant:
+      enabled: True
+      distribution:
+        '4': 0
+        '8': 0
+        '16': 1
+        '32': 0
+
+    max_rank: 200
+    hetero_strategy: heavy_tail
+    hetero_ranks: {}
+    hetero_alpha: {}
+
+    fah:
+      enabled: False
+
+    hetlora:
+      enabled: False
+
+    adas_pruneonly:
+      enabled: False
+
+    adas:
+      enabled: False
+
+    adas_layeraware:
+      enabled: True
+      rank_min: 4
+      rank_max: 200
+      init_rank: 64
+
+      stage1:
+        gamma: 0.99
+        regularizer_weight: 0.001
+
+      stage2:
+        enabled: True
+        q_up_bits: 32
+        q_down_bits: 32
+        cmeta_bits: 32
+        uplink_budget_window_s: 230.0
+        downlink_budget_window_s: 63.0
+        residual_enabled: True
+
+      aggregation:
+        mode: sample_size
+        epsilon: 1e-8
+
+# Adapter settings read from cfg.llm.adapter by parts of the shared method code.
+llm:
+  tok_len: 128
+
+  adapter:
+    use: True
+    mv_to_cpu: False
+
+    args:
+      - adapter_package: peft
+        adapter_method: lora
+        target_modules: ['attention.self.in_proj', 'attention.output.dense',
+                         'intermediate.dense', 'output.dense']
+        r: 8
+        lora_alpha: 16
+        lora_dropout: 0.05
+
+    base_quant:
+      enabled: False
+      distribution:
+        '4': 0
+        '8': 0
+        '16': 1
+        '32': 0
+
+    max_rank: 200
+    hetero_strategy: heavy_tail
+    hetero_ranks: {}
+    hetero_alpha: {}
+
+    fah:
+      enabled: False
+
+    hetlora:
+      enabled: False
+
+    adas_pruneonly:
+      enabled: False
+
+    adas:
+      enabled: False
